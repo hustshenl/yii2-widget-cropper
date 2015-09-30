@@ -1,0 +1,23 @@
+{
+    "name": "hustshenl/yii2-widget-cropper",
+    "description": "Enhanced Yii2 wrapper for the Cropper jQuery plugin (sub repo split from yii2-widgets).",
+    "keywords": ["yii2", "extension", "widget", "form", "Cropper", "jquery", "plugin"],
+    "homepage": "https://github.com/hustshenl/yii2-widget-cropper",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Shen Lei",
+            "email": "shen@shenl.com",
+            "homepage": "http://www.shenl.com/"
+        }
+    ],
+    "require": {
+        "kartik-v/yii2-krajee-base": "~1.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "hustshenl\\cropper\\": ""
+        }
+    }
+}
