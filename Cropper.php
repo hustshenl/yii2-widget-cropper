@@ -12,6 +12,7 @@ use Yii;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\base\InvalidConfigException;
+use yii\web\JsExpression;
 
 /**
  * Cropper widget is a Yii2 wrapper for the Cropper jQuery plugin. This
@@ -62,16 +63,11 @@ class Cropper extends \kartik\base\InputWidget
     public $initValueText;
 
     /**
-     * @var bool whether to hide the search control and render it as a simple select. Defaults to `false`.
-     */
-    public $hideSearch = false;
-
-    /**
      * @var array addon to prepend or append to the Cropper widget
      * - prepend: array the prepend addon configuration
      *     - content: string the prepend addon content
      *     - asButton: boolean whether the addon is a button or button group. Defaults to false.
-     * - append: array the append addon configuration
+     *     - append: array the append addon configuration
      *     - content: string the append addon content
      *     - asButton: boolean whether the addon is a button or button group. Defaults to false.
      * - groupOptions: array HTML options for the input group
@@ -105,32 +101,27 @@ class Cropper extends \kartik\base\InputWidget
     public function init()
     {
         parent::init();
-        $this->pluginOptions['theme'] = $this->theme;
+        //$this->pluginOptions = $this->theme;
         if (!empty($this->addon) || empty($this->pluginOptions['width'])) {
             $this->pluginOptions['width'] = '100%';
+            //$this->pluginOptions['crop'] = 'function(e) {console.log(e);}';
         }
-        $multiple = ArrayHelper::getValue($this->pluginOptions, 'multiple', false);
-        unset($this->pluginOptions['multiple']);
-        $this->options['multiple'] = ArrayHelper::getValue($this->options, 'multiple', $multiple);
-        if ($this->hideSearch) {
-            $css = ArrayHelper::getValue($this->pluginOptions, 'dropdownCssClass', '');
-            $css .= ' kv-hide-search';
-            $this->pluginOptions['dropdownCssClass'] = $css;
-        }
-        $this->initPlaceholder();
+
+        //$this->initPlaceholder();
         if (!isset($this->data)) {
             if (!isset($this->value) && !isset($this->initValueText)) {
                 $this->data = [];
             } else {
-                $key = isset($this->value) ? $this->value : ($multiple ? [] : '');
+                $key = isset($this->value) ? $this->value : '';
                 $val = isset($this->initValueText) ? $this->initValueText : $key;
-                $this->data = $multiple ? array_combine($key, $val) : [$key => $val];
+                $this->data = [$key => $val];
             }
         }
         Html::addCssClass($this->options, 'form-control');
         $this->initLanguage('language', true);
         $this->registerAssets();
         $this->renderInput();
+        $this->renderCropper();
     }
 
     /**
@@ -156,54 +147,6 @@ class Cropper extends \kartik\base\InputWidget
     }
 
     /**
-     * Embeds the input group addon
-     *
-     * @param string $input
-     *
-     * @return string
-     */
-    protected function embedAddon($input)
-    {
-        if (!isset($this->size) && empty($this->addon)) {
-            return $input;
-        }
-        $group = ArrayHelper::getValue($this->addon, 'groupOptions', []);
-        $size = isset($this->size) ? ' input-group-' . $this->size : '';
-        Html::addCssClass($group, 'input-group' . $size);
-        if (empty($this->addon)) {
-            return Html::tag('div', $input, $group);
-        }
-        $prepend = ArrayHelper::getValue($this->addon, 'prepend', '');
-        $append = ArrayHelper::getValue($this->addon, 'append', '');
-        if ($this->pluginLoading) {
-            Html::addCssClass($group, 'kv-input-group-hide');
-            Html::addCssClass($group, 'group-' . $this->options['id']);
-        }
-        if (is_array($prepend)) {
-            $content = ArrayHelper::getValue($prepend, 'content', '');
-            if (isset($prepend['asButton']) && $prepend['asButton'] == true) {
-                $prepend = Html::tag('div', $content, ['class' => 'input-group-btn']);
-            } else {
-                $prepend = Html::tag('span', $content, ['class' => 'input-group-addon']);
-            }
-            Html::addCssClass($group, 'select2-bootstrap-prepend');
-        }
-        if (is_array($append)) {
-            $content = ArrayHelper::getValue($append, 'content', '');
-            if (isset($append['asButton']) && $append['asButton'] == true) {
-                $append = Html::tag('div', $content, ['class' => 'input-group-btn']);
-            } else {
-                $append = Html::tag('span', $content, ['class' => 'input-group-addon']);
-            }
-            Html::addCssClass($group, 'select2-bootstrap-append');
-        }
-        $addonText = $prepend . $input . $append;
-        $contentBefore = ArrayHelper::getValue($this->addon, 'contentBefore', '');
-        $contentAfter = ArrayHelper::getValue($this->addon, 'contentAfter', '');
-        return Html::tag('div', $contentBefore . $addonText . $contentAfter, $group);
-    }
-
-    /**
      * Renders the source Input for the Cropper plugin.
      * Graceful fallback to a normal HTML select dropdown
      * or text input - in case JQuery is not supported by
@@ -215,8 +158,52 @@ class Cropper extends \kartik\base\InputWidget
             $this->_loadIndicator = '<div class="kv-plugin-loading loading-' . $this->options['id'] . '">&nbsp;</div>';
             Html::addCssStyle($this->options, 'display:none');
         }
-        $input = $this->getInput('dropDownList', true);
-        echo $this->_loadIndicator . $this->embedAddon($input);
+        //$input = $this->getInput('hiddenInput', false);
+        $cropperName = Html::getInputName($this->model, $this->attribute.'_crop');
+        echo Html::hiddenInput($cropperName . '[x]', '', ['id'=>'data-x-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[y]', '', ['id'=>'data-y-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[height]', '', ['id'=>'data-height-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[width]', '', ['id'=>'data-width-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[rotate]', '', ['id'=>'data-rotate-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[scale_x]', '', ['id'=>'data-scale-x-'.$this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[scale_y]', '', ['id'=>'data-scale-y-'.$this->options['id']]);
+        //echo $this->_loadIndicator . $this->embedAddon($input);
+        //echo $input;
+
+
+    }
+
+    protected function renderCropper()
+    {
+        echo <<<HTML
+        <div class="row">
+      <div class="col-xs-8">
+        <!--<h3 class="page-header">Demo:</h3>-->
+        <div class="img-container">
+        <img src="{$this->data}" alt="Picture" style="display: none;">
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <!--<h3 class="page-header">Preview:</h3>-->
+        <div class="docs-preview clearfix">
+          <div class="img-preview preview-lg"></div>
+          <div class="img-preview preview-md"></div>
+          <div class="img-preview preview-sm"></div>
+          <div class="img-preview preview-xs"></div>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <h3 class="page-header">Select a Image:</h3>
+        <label class="btn btn-primary btn-upload" for="input-{$this->options['id']}" title="Upload image file">
+            <input type="file" class="sr-only" id="input-{$this->options['id']}" name="{$this->name}" accept="image/*">
+            <span class="docs-tooltip" data-toggle="tooltip" title="Import image with Blob URLs">
+              <span class="fa fa-upload"></span>
+            </span>
+          </label>
+      </div>
+    </div>
+
+HTML;
     }
 
     /**
@@ -240,18 +227,69 @@ class Cropper extends \kartik\base\InputWidget
     {
         $id = $this->options['id'];
         $this->registerAssetBundle();
+        $this->pluginOptions['crop'] = new JsExpression(<<<JS
+function(e) {
+    $("#data-x-{$id}").val(Math.round(e.x));
+    $("#data-y-{$id}").val(Math.round(e.y));
+    $("#data-height-{$id}").val(Math.round(e.height));
+    $("#data-width-{$id}").val(Math.round(e.width));
+    $("#data-rotate-{$id}").val(e.rotate);
+    $("#data-scale-x-{$id}").val(e.scaleX);
+    $("#data-scale-y-{$id}").val(e.scaleY);
+  }
+JS
+        );
+
         // do not open dropdown when clear icon is pressed to clear value
-        $js = "\$('#{$id}').on('select2:opening', initS2Open).on('select2:unselecting', initS2Unselect);";
+        //$js = "\$('#{$id}').on('select2:opening', initS2Open).on('select2:unselecting', initS2Unselect);";
+        $js = <<<JS
+// Import image
+    var \$image = \$('.field-{$this->options['id']} .img-container > img')
+    var \$inputImage = \$('#input-{$this->options['id']}');
+    var URL = window.URL || window.webkitURL;
+    var blobURL;
+
+    if (URL) {
+      \$inputImage.change(function () {
+        var files = this.files;
+        var file;
+
+        if (!\$image.data('cropper')) {
+          return;
+        }
+
+        if (files && files.length) {
+          file = files[0];
+
+          if (/^image\/\w+$/.test(file.type)) {
+            blobURL = URL.createObjectURL(file);
+            \$image.one('built.cropper', function () {
+              URL.revokeObjectURL(blobURL); // Revoke when load complete
+            }).cropper('reset').cropper('replace', blobURL).show();
+            //\$inputImage.val('');
+          } else {
+            \$body.tooltip('Please choose an image file.', 'warning');
+          }
+        }
+      });
+    } else {
+      \$inputImage.prop('disabled', true).parent().addClass('disabled');
+    }
+
+JS;
+
         $this->getView()->registerJs($js);
         // register plugin
         if ($this->pluginLoading) {
             $this->registerPlugin(
-                'select2',
-                "jQuery('#{$id}')",
-                "initS2Loading('{$id}', '.select2-container--{$this->theme}')"
+                'cropper',
+                //"jQuery('#{$id} > img')",
+                "jQuery('.field-{$id} .img-container > img')"//,
+            //"initS2Loading('{$id}', '.select2-container--{$this->theme}')"
             );
         } else {
-            $this->registerPlugin('select2');
+            $this->registerPlugin('cropper');
         }
+
     }
 }

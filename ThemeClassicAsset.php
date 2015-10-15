@@ -24,7 +24,7 @@ class ThemeClassicAsset extends \kartik\base\AssetBundle
     public function init()
     {
         $this->setSourcePath(__DIR__ . '/assets');
-        $this->setupAssets('css', ['css/select2-classic']);
+        $this->setupAssets('css', ['css/cropper-classic']);
         parent::init();
     }
 }

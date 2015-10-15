@@ -24,8 +24,8 @@ class CropperAsset extends \kartik\base\AssetBundle
     public function init()
     {
         $this->setSourcePath(__DIR__ . '/assets');
-        $this->setupAssets('css', ['css/select2']);
-        $this->setupAssets('js', ['js/select2.full', 'js/select2-krajee']);
+        $this->setupAssets('css', ['css/cropper','css/main']);
+        $this->setupAssets('js', ['js/cropper',]);
         parent::init();
     }
 }

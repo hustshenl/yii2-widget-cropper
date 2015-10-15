@@ -27,6 +27,45 @@ or add
 to the ```require``` section of your `composer.json` file.
 
 
+## Usage
+
+
+In View
+```
+echo Form::widget([ // continuation fields to row above without labels
+    'model' => $model,
+    'form' => $form,
+    'columns' => 1,
+    'attributes' => [
+        'cover' => [
+            'type' => Form::INPUT_WIDGET,
+            'widgetClass' => '\hustshenl\cropper\Cropper',
+            'options' => [
+                'data' => '',
+                'pluginOptions' => [
+                    'aspectRatio' => 240 / 320,
+                    'autoCropArea' => 1,
+                    'preview' => '.img-preview',
+                    'strict' => true,
+                    'guides' => false,
+                    'highlight' => true,
+                    'dragCrop' => true,
+                    'cropBoxMovable' => true,
+                    'cropBoxResizable' => true,
+                ],
+            ]
+        ],
+    ]
+]);
+```
+
+In Model
+```
+$image = UploadedFile::getInstance($this, 'cover');
+$cropper = $this->cover_crop
+```
+
+
 
 ## License
 
