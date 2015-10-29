@@ -42,6 +42,7 @@ class Cropper extends \kartik\base\InputWidget
      * [[\yii\helpers\ArrayHelper::map()]].
      */
     public $data;
+    public $label;
 
     /**
      * @var string the locale ID (e.g. 'fr', 'de') for the language to be used by the Cropper Widget.
@@ -106,6 +107,16 @@ class Cropper extends \kartik\base\InputWidget
             $this->pluginOptions['width'] = '100%';
             //$this->pluginOptions['crop'] = 'function(e) {console.log(e);}';
         }
+        $this->pluginOptions['aspectRatio'] = empty($this->pluginOptions['aspectRatio']) ? 1 : $this->pluginOptions['aspectRatio'];
+        $this->pluginOptions['autoCropArea'] = empty($this->pluginOptions['autoCropArea']) ? 1 : $this->pluginOptions['autoCropArea'];
+        $this->pluginOptions['preview'] = empty($this->pluginOptions['preview']) ? '.img-preview' : $this->pluginOptions['preview'];
+        $this->pluginOptions['strict'] = empty($this->pluginOptions['strict']) ? true : $this->pluginOptions['strict'];
+        $this->pluginOptions['guides'] = empty($this->pluginOptions['guides']) ? false : $this->pluginOptions['guides'];
+        $this->pluginOptions['highlight'] = empty($this->pluginOptions['highlight']) ? true : $this->pluginOptions['highlight'];
+        $this->pluginOptions['dragCrop'] = empty($this->pluginOptions['dragCrop']) ? true : $this->pluginOptions['dragCrop'];
+        $this->pluginOptions['cropBoxMovable'] = empty($this->pluginOptions['cropBoxMovable']) ? true : $this->pluginOptions['cropBoxMovable'];
+        $this->pluginOptions['cropBoxResizable'] = empty($this->pluginOptions['cropBoxResizable']) ? true : $this->pluginOptions['cropBoxResizable'];
+
 
         //$this->initPlaceholder();
         if (!isset($this->data)) {
@@ -159,14 +170,14 @@ class Cropper extends \kartik\base\InputWidget
             Html::addCssStyle($this->options, 'display:none');
         }
         //$input = $this->getInput('hiddenInput', false);
-        $cropperName = Html::getInputName($this->model, $this->attribute.'_crop');
-        echo Html::hiddenInput($cropperName . '[x]', '', ['id'=>'data-x-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[y]', '', ['id'=>'data-y-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[height]', '', ['id'=>'data-height-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[width]', '', ['id'=>'data-width-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[rotate]', '', ['id'=>'data-rotate-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[scale_x]', '', ['id'=>'data-scale-x-'.$this->options['id']]);
-        echo Html::hiddenInput($cropperName . '[scale_y]', '', ['id'=>'data-scale-y-'.$this->options['id']]);
+        $cropperName = Html::getInputName($this->model, $this->attribute . '_crop');
+        echo Html::hiddenInput($cropperName . '[x]', '', ['id' => 'data-x-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[y]', '', ['id' => 'data-y-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[height]', '', ['id' => 'data-height-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[width]', '', ['id' => 'data-width-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[rotate]', '', ['id' => 'data-rotate-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[scale_x]', '', ['id' => 'data-scale-x-' . $this->options['id']]);
+        echo Html::hiddenInput($cropperName . '[scale_y]', '', ['id' => 'data-scale-y-' . $this->options['id']]);
         //echo $this->_loadIndicator . $this->embedAddon($input);
         //echo $input;
 
@@ -177,6 +188,21 @@ class Cropper extends \kartik\base\InputWidget
     {
         echo <<<HTML
         <div class="row">
+        <div class="col-xs-12">
+            <label class="btn btn-primary btn-upload" for="input-{$this->options['id']}" title="Upload image file">
+                <input type="file" class="sr-only" id="input-{$this->options['id']}" name="{$this->name}" accept="image/*">
+                <span class="docs-tooltip" data-toggle="tooltip" title="Import image with Blob URLs">
+                  <span class="fa fa-upload"></span>
+                      {$this->label}
+                    </span>
+              </label>
+              <div style="margin-bottom: 10px;"></div>
+
+          </div>
+
+
+
+
       <div class="col-xs-8">
         <!--<h3 class="page-header">Demo:</h3>-->
         <div class="img-container">
@@ -192,15 +218,7 @@ class Cropper extends \kartik\base\InputWidget
           <div class="img-preview preview-xs"></div>
         </div>
       </div>
-      <div class="col-xs-4">
-        <h3 class="page-header">Select a Image:</h3>
-        <label class="btn btn-primary btn-upload" for="input-{$this->options['id']}" title="Upload image file">
-            <input type="file" class="sr-only" id="input-{$this->options['id']}" name="{$this->name}" accept="image/*">
-            <span class="docs-tooltip" data-toggle="tooltip" title="Import image with Blob URLs">
-              <span class="fa fa-upload"></span>
-            </span>
-          </label>
-      </div>
+
     </div>
 
 HTML;
@@ -253,14 +271,11 @@ JS
       \$inputImage.change(function () {
         var files = this.files;
         var file;
-
         if (!\$image.data('cropper')) {
           return;
         }
-
         if (files && files.length) {
           file = files[0];
-
           if (/^image\/\w+$/.test(file.type)) {
             blobURL = URL.createObjectURL(file);
             \$image.one('built.cropper', function () {

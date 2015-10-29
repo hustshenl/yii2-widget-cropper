@@ -75,14 +75,14 @@ body {
 }
 
 .img-container {
-    min-height: 200px;
+    min-height: 210px;
     max-height: 516px;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 @media (min-width: 768px) {
     .img-container {
-        min-height: 516px;
+        min-height: 320px;
     }
 }
 
@@ -106,23 +106,23 @@ body {
 }
 
 .preview-lg {
-    width: 263px;
-    height: 148px;
+    width: 200px;
+    height: 100px;
 }
 
 .preview-md {
-    width: 139px;
-    height: 78px;
+    width: 120px;
+    height: 60px;
 }
 
 .preview-sm {
-    width: 69px;
-    height: 39px;
+    width: 60px;
+    height: 30px;
 }
 
 .preview-xs {
-    width: 35px;
-    height: 20px;
+    width: 30px;
+    height: 15px;
     margin-right: 0;
 }
 
