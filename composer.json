@@ -1,5 +1,5 @@
 {
-    "name": "hustshenl/yii2-widget-cropper",
+    "name": "hustshenl/yii2-cropper",
     "description": "Enhanced Yii2 wrapper for the Cropper jQuery plugin (sub repo split from yii2-widgets).",
     "keywords": ["yii2", "extension", "widget", "form", "Cropper", "jquery", "plugin"],
     "homepage": "https://github.com/hustshenl/yii2-widget-cropper",
