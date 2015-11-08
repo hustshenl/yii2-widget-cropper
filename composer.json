@@ -5,7 +5,7 @@
     "homepage": "https://github.com/hustshenl/yii2-widget-cropper",
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
-    "authors": [ 
+    "authors": [
         {
             "name": "Shen Lei",
             "email": "shen@shenl.com",
