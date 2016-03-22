@@ -75,6 +75,7 @@ body {
 }
 
 .img-container {
+    background-color: #666;
     min-height: 210px;
     max-height: 516px;
     margin-bottom: 0px;
@@ -85,7 +86,10 @@ body {
         min-height: 320px;
     }
 }
-
+.img-container{
+    margin: 10px 10px 10px 0;
+    border: 1px solid #999;
+}
 .img-container > img {
     max-width: 100%;
 }
@@ -97,8 +101,8 @@ body {
 
 .img-preview {
     float: left;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: 10px 10px 0 0;
+    border: 1px solid #999;
 }
 
 .img-preview > img {
@@ -107,22 +111,22 @@ body {
 
 .preview-lg {
     width: 200px;
-    height: 100px;
+    height: 200px;
 }
 
 .preview-md {
     width: 120px;
-    height: 60px;
+    height: 120px;
 }
 
 .preview-sm {
     width: 60px;
-    height: 30px;
+    height: 60px;
 }
 
 .preview-xs {
     width: 30px;
-    height: 15px;
+    height: 30px;
     margin-right: 0;
 }
 

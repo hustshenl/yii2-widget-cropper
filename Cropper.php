@@ -203,13 +203,13 @@ class Cropper extends \kartik\base\InputWidget
 
 
 
-      <div class="col-xs-8">
+      <div class="col-md-8 col-xs-10">
         <!--<h3 class="page-header">Demo:</h3>-->
         <div class="img-container">
         <img src="{$this->data}" alt="Picture" style="display: none;">
         </div>
       </div>
-      <div class="col-xs-4">
+      <div class="col-md-4 col-xs-12">
         <!--<h3 class="page-header">Preview:</h3>-->
         <div class="docs-preview clearfix">
           <div class="img-preview preview-lg"></div>
