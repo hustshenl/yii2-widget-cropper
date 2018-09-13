@@ -109,7 +109,7 @@ class Cropper extends \kartik\base\InputWidget
         }
         $this->pluginOptions['aspectRatio'] = empty($this->pluginOptions['aspectRatio']) ? 1 : $this->pluginOptions['aspectRatio'];
         $this->pluginOptions['autoCropArea'] = empty($this->pluginOptions['autoCropArea']) ? 1 : $this->pluginOptions['autoCropArea'];
-        $this->pluginOptions['preview'] = empty($this->pluginOptions['preview']) ? '.img-preview' : $this->pluginOptions['preview'];
+        $this->pluginOptions['preview'] = empty($this->pluginOptions['preview']) ? '.field-'.$this->options['id'].' .img-preview' : $this->pluginOptions['preview'];
         $this->pluginOptions['strict'] = empty($this->pluginOptions['strict']) ? true : $this->pluginOptions['strict'];
         $this->pluginOptions['guides'] = empty($this->pluginOptions['guides']) ? false : $this->pluginOptions['guides'];
         $this->pluginOptions['highlight'] = empty($this->pluginOptions['highlight']) ? true : $this->pluginOptions['highlight'];
@@ -258,11 +258,14 @@ function(e) {
 JS
         );
 
+        $varId = substr(md5($this->options['id']),0,6);
         // do not open dropdown when clear icon is pressed to clear value
         //$js = "\$('#{$id}').on('select2:opening', initS2Open).on('select2:unselecting', initS2Unselect);";
         $js = <<<JS
 // Import image
-    var \$image = \$('.field-{$this->options['id']} .img-container > img')
+var cropper_{$varId} = function () {
+    var \$image = \$('.field-{$this->options['id']} .img-container > img');
+    var \$container = \$('.field-{$this->options['id']} .cropper-container');
     var \$inputImage = \$('#input-{$this->options['id']}');
     var URL = window.URL || window.webkitURL;
     var blobURL;
@@ -280,7 +283,8 @@ JS
             blobURL = URL.createObjectURL(file);
             \$image.one('built.cropper', function () {
               URL.revokeObjectURL(blobURL); // Revoke when load complete
-            }).cropper('reset').cropper('replace', blobURL).show();
+              \$image.cropper('reset');
+            }).cropper('reset').cropper('replace', blobURL).cropper('reset').show();
             //\$inputImage.val('');
           } else {
             \$body.tooltip('Please choose an image file.', 'warning');
@@ -290,6 +294,7 @@ JS
     } else {
       \$inputImage.prop('disabled', true).parent().addClass('disabled');
     }
+}();
 
 JS;
 
